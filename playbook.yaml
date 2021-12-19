@@ -1,0 +1,15 @@
+
+---
+- hosts: minio
+  become: yes
+  tasks:
+    - name: "Installation Configuration de MiNIO"
+      include_role:
+        name: role-minio
+      vars:
+        role_minio_use_ssl: no
+        role_minio_minio_url: "http://myminio.test.local"
+        role_minio_password_admin_user: "Azertyiop123*"
+        #role_mino_local_cert_path: "/path/to/cert.crt"
+        #role_mino_local_key_path: "/path/to/cert.key"
+        # role_mino_local_CA_path: "/path/to/ca.crt"

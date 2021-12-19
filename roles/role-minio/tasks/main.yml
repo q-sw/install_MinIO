@@ -1,0 +1,9 @@
+---
+# tasks file for role-minio
+- name: "Installation de MinIO"
+  include_tasks: install_minio.yml
+  when: role_minio_install_minio | default(True) | bool
+
+- name: "Configuration de MinIO"
+  include_tasks: configure_minio.yml
+  when: role_minio_configure_minio | default(True) | bool

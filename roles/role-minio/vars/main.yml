@@ -1,0 +1,5 @@
+---
+# vars file for role-minio
+role_minio_config_path: "/etc/minio"
+role_minio_certs_path: "{{role_minio_config_path}}/certs"
+role_minio_ca_path: "{{role_minio_certs_path}}/CAs"

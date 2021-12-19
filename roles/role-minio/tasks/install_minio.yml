@@ -1,0 +1,31 @@
+---
+- name: "Creation de l'utilisateur Minio"
+  user:
+    name: "{{ role_minio_minio_user }}"
+    create_home: no
+    state: present
+    shell: /sbin/nologin
+
+- name: "Creation du dossier data"
+  file:
+    path: "{{ role_minio_data_folder_path }}"
+    state: directory
+    owner: "{{ role_minio_minio_user }}"
+    group: "{{ role_minio_minio_user }}"
+    mode: 0755
+
+- name: "Creation du dossier de configuration MinIO"
+  file:
+    path: "/etc/minio"
+    state: directory
+    owner: "{{ role_minio_minio_user }}"
+    group: "{{ role_minio_minio_user }}"
+    mode: 0755
+
+- name: "Telechargement de MinIO"
+  get_url:
+    url: "https://dl.min.io/server/minio/release/darwin-amd64/minio"
+    dest: "/usr/local/bin/minio"
+    owner: "{{ role_minio_minio_user }}"
+    group: "{{ role_minio_minio_user }}"
+    mode: 0755

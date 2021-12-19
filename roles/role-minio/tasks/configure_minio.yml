@@ -1,0 +1,68 @@
+---
+- name: "Creation du fichier environnement MinIO"
+  template:
+    src: minio.env.j2
+    dest: /etc/default/minio
+    mode: 0644
+
+- name: "Mise en place du SSL"
+  block:
+    - name: "Creation du dossier Cert pour MinIO"
+      file:
+        path: "{{ role_minio_certs_path }}"
+        state: directory
+        owner: "{{ role_minio_minio_user }}"
+        group: "{{ role_minio_minio_user }}"
+        mode: 0755
+
+    - name: "Creation du dossier CAs pour MinIO"
+      file:
+        path: "{{ role_minio_ca_path }}"
+        state: directory
+        owner: "{{ role_minio_minio_user }}"
+        group: "{{ role_minio_minio_user }}"
+        mode: 0755
+
+    - name: "Copie du certificat"
+      copy:
+        src: "{{ role_mino_local_cert_path }}"
+        dest: "{{ role_minio_certs_path }}"
+        owner: "{{ role_minio_minio_user }}"
+        group: "{{ role_minio_minio_user }}"
+        mode: 0644
+
+    - name: "Copie de la clé"
+      copy:
+        src: "{{ role_mino_local_key_path }}"
+        dest: "{{ role_minio_certs_path }}"
+        owner: "{{ role_minio_minio_user }}"
+        group: "{{ role_minio_minio_user }}"
+        mode: 0400
+
+    - name: "Copie de la CA"
+      copy:
+        src: "{{ role_mino_local_CA_path }}"
+        dest: "{{ role_minio_ca_path }}"
+        owner: "{{ role_minio_minio_user }}"
+        group: "{{ role_minio_minio_user }}"
+        mode: 0400
+  when: 
+  - role_minio_use_ssl 
+  - role_mino_local_cert_path | length > 0
+  - role_mino_local_key_path | length > 0
+  - role_mino_local_CA_path | length > 0
+
+- name: "Copie configuration service Minio"
+  copy:
+    src: "minio.service"
+    dest: /etc/systemd/system/minio.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: "Demarrage du service MinIO"
+  systemd:
+    name: "minio.service"
+    state: started
+    enabled: yes
+    daemon_reload: yes
